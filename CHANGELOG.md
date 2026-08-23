@@ -7,6 +7,17 @@ tabtools.
 
 ---
 
+## [Unreleased]
+
+### Changed
+- README — portable ``YOUR_LOCAL_PATH`` install; full ``viz`` helper catalogue;
+  added **What this is not**, maturity note, and repo-local
+  [COMPATIBILITY.md](COMPATIBILITY.md)
+- Shipped [VIZTOOLS_CONTRACT.md](VIZTOOLS_CONTRACT.md) inside the package repo
+  so GitHub clones no longer depend on a sibling workspace path
+
+---
+
 ## [0.1.3] — 2026-06-25
 
 ### Added
