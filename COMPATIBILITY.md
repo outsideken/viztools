@@ -15,8 +15,10 @@ tabtools.  Dependents declare a minimum floor (e.g. `viztools>=0.1.0`).
 
 | Consumer | Declares |
 |---|---|
-| h3tools | `viztools>=0.1.3` (raised from `>=0.1.0` for linestring helpers) |
+| h3tools **0.8.0b1** | `viztools>=0.1.3` (raised from `>=0.1.0` for linestring helpers) |
 | tabtools / notebooks | import viztools directly for palettes and `format_plot` |
+
+Current freeze stack: wherewhen **0.2.6** + viztools **0.1.3** + h3tools **0.8.0b1**.
 
 Behaviour expectations for consumers: [VIZTOOLS_CONTRACT.md](VIZTOOLS_CONTRACT.md).
 
