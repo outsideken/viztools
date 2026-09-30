@@ -1,0 +1,34 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    name: test (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # 3.12 matches h3-tools CI; 3.9 is the floor pyproject.toml declares.
+        python-version: ["3.12", "3.9"]
+    env:
+      MPLBACKEND: Agg  # no display on the runner
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install wherewhen (sibling package, not on PyPI)
+        run: pip install git+https://github.com/outsideken/wherewhen.git
+
+      - name: Install viztools
+        run: pip install -e . pytest
+
+      - name: Run test suite
+        run: pytest tests/ -q -rs
