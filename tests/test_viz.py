@@ -111,7 +111,8 @@ class TestPlotLinestring:
 
     def test_invalid_type_raises(self):
         fig, ax = plt.subplots()
-        with pytest.raises(ValueError, match="non-empty"):
+        # Wrong geometry type is a TypeError since 0.1.4 (#2).
+        with pytest.raises(TypeError, match=r"\[plot_linestring\].*got Polygon"):
             plot_linestring(ax, box(0, 0, 1, 1), verbose=False)
         plt.close(fig)
 
