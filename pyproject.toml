@@ -25,7 +25,7 @@ dependencies = [
     "matplotlib",
     "numpy",
     "webcolors",
-    "wherewhen>=0.2.0",
+    "wherewhen>=0.2.10",
 ]
 
 [tool.setuptools.packages.find]
