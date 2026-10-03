@@ -35,7 +35,7 @@ def format_plot(
     tick_width: float = 1,
     tick_color: str | None = None,
     label_color: str | None = None,
-    spines: Literal["none", "bottom", "left", "all", "minimal"] = "none",
+    spines: Literal["none", "bottom", "left", "all", "minimal"] | Sequence[str] = "none",
     show_ticks: Literal["all", "x", "y", "both"] = "all",
     show_labels: Literal["all", "x", "y", "both"] = "all",
     grid: bool | str = False,
@@ -51,6 +51,7 @@ def format_plot(
 - When `ax is None`, operates on `plt.gca()`.
 - Returns the formatted `Axes` (enables chaining).
 - Default `spines="none"` gives the classic open plot style used across JEMA notebooks.
+- `spines` also takes a list of spine names (e.g. `["left", "top"]`); an unknown name raises `ValueError`.
 - Must not mutate data artists — only axis chrome (ticks, spines, grid, facecolor).
 
 **h3tools usage pattern (2c wire-up)**

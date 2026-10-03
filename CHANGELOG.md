@@ -9,6 +9,11 @@ tabtools.
 
 ## [Unreleased]
 
+### Fixed
+- ``format_plot(spines=[...])`` crashed with ``unhashable type: 'list'`` (#4).
+  A list or tuple of spine names now works as documented; a name the axis
+  doesn't have raises ``ValueError``. Preset strings are unchanged.
+
 ### Changed
 - README — portable ``YOUR_LOCAL_PATH`` install; full ``viz`` helper catalogue;
   added **What this is not**, maturity note, and repo-local
