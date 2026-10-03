@@ -1,12 +1,12 @@
 # viztools API contract
 
 Specification for the **viztools** package (Phase 2b) based on what downstream
-toolkit packages need today.  **h3tools 0.5.0** (current) declares
-`viztools>=0.1.0` as a firm dependency; **tabtools** and notebooks import
+toolkit packages need today.  **h3tools** declares `viztools>=0.1.3` as a firm
+dependency; **tabtools** and notebooks import
 viztools directly for palettes and axis styling.
 
-*Contract for the viztools public surface.  Package version **0.1.3**
-requires ``wherewhen>=0.2.0``; h3tools typically declares ``viztools>=0.1.0``.
+*Contract for the viztools public surface.  Package version **0.1.4**
+requires ``wherewhen>=0.2.0``; h3tools declares ``viztools>=0.1.3``.
 See [COMPATIBILITY.md](COMPATIBILITY.md).*
 
 ## Design principles
@@ -16,7 +16,7 @@ See [COMPATIBILITY.md](COMPATIBILITY.md).*
 | **Direct import** | `from viztools.viz import format_plot` — not re-exported through h3tools or jematools |
 | **Matplotlib-first** | Functions accept `matplotlib.axes.Axes`; no hard dependency on geopandas |
 | **Composable** | h3tools draws hex cells; viztools styles axes; user adds colourbars/legends |
-| **Independent versioning** | viztools versions on its own; dependents pin floors (e.g. `viztools>=0.1.0`) |
+| **Independent versioning** | viztools versions on its own; dependents pin floors (e.g. `viztools>=0.1.3`) |
 
 ## Required surface — `viztools.viz`
 
@@ -118,7 +118,7 @@ Minimum tests before h3tools removes the `conftest.py` viztools stub (2c):
 
 | Consumer | Declares |
 |---|---|
-| **h3tools 0.5.0** | `viztools>=0.1.0` |
+| **h3tools 0.9.0b2** | `viztools>=0.1.3` |
 
 Bump viztools minor when adding palette APIs; bump h3tools only when it starts
 calling new viztools symbols (Phase 2c).

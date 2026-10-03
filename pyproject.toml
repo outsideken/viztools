@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "viztools"
-version = "0.1.3"
+version = "0.1.4"
 description = "Matplotlib styling and ColorBrewer palettes for geospatial visualization"
 license = { text = "MIT" }
 authors = [{ name = "OutsideKen" }]
