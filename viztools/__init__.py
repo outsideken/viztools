@@ -56,10 +56,17 @@ __all__ = [
 ]
 
 
+from viztools._messages import named_errors as _named_errors
+
+
+@_named_errors
 def list_functions(query: str = "") -> None:
     """Print a catalogue of public viztools functions grouped by module."""
     import inspect
     from viztools import palettes, viz
+    from viztools._validators import require_str
+
+    require_str(query, "list_functions", "query")
 
     sections = [
         ("palettes", palettes),

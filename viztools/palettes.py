@@ -23,6 +23,7 @@ list_palettes
 from __future__ import annotations
 
 import json
+import numbers
 from functools import lru_cache
 from pathlib import Path
 from typing import Literal
@@ -30,7 +31,8 @@ from typing import Literal
 import matplotlib.colors as mcolors
 import numpy as np
 
-from viztools._messages import warn as _warn
+from viztools._messages import named_errors as _named_errors, warn as _warn
+from viztools._validators import require_str as _require_str
 
 __all__ = [
     "ANOMALY_PALETTE",
@@ -81,7 +83,18 @@ def _load_789() -> dict:
     return json.loads(text)
 
 
+def _check_class_count(n, func_name: str, *, allow_none: bool = False) -> None:
+    """n is an int (NumPy ints too, not bool) of at least 1, or None when allowed."""
+    if n is None and allow_none:
+        return
+    if isinstance(n, bool) or not isinstance(n, numbers.Integral):
+        raise TypeError(_warn(func_name, f"n must be an int, got {type(n).__name__}."))
+    if n < 1:
+        raise ValueError(_warn(func_name, f"n must be a positive integer, got {n!r}."))
+
+
 def _normalize_kind(kind: str) -> str:
+    _require_str(kind, "get_palette", "kind")
     key = kind.strip().lower()
     if key not in _KIND_ALIASES:
         raise ValueError(
@@ -136,6 +149,7 @@ def _lookup_ranges(kind: str, name: str, n: int) -> list[str] | None:
     return None
 
 
+@_named_errors
 def get_palette(
     name: str,
     n: int = 9,
@@ -162,11 +176,13 @@ def get_palette(
 
     Raises
     ------
+    TypeError
+        If *name* or *kind* is not a str, or *n* is not an int.
     ValueError
-        If *name*, *n*, or *kind* is invalid or the palette is not found.
+        If *n* is below 1, *kind* is unknown, or the palette is not found.
     """
-    if not isinstance(n, int) or n < 1:
-        raise ValueError(_warn("get_palette", f"n must be a positive integer, got {n!r}."))
+    _require_str(name, "get_palette", "name")
+    _check_class_count(n, "get_palette")
 
     palette_kind = _normalize_kind(kind)
     palette_name = _normalize_name(name)
@@ -191,6 +207,7 @@ def get_palette(
     )
 
 
+@_named_errors
 def get_cmap(
     name: str,
     n: int = 9,
@@ -217,6 +234,7 @@ def get_cmap(
     return mcolors.ListedColormap(colors, name=f"{name}_{n}")
 
 
+@_named_errors
 def list_palettes(
     kind: PaletteKind = "sequential",
     n: int | None = 9,
@@ -241,6 +259,7 @@ def list_palettes(
     list[str]
         Sorted palette names.
     """
+    _check_class_count(n, "list_palettes", allow_none=True)
     palette_kind = _normalize_kind(kind)
     names: set[str] = set()
 

@@ -46,7 +46,14 @@ from shapely.geometry import LineString, MultiLineString, Point, Polygon
 from shapely.geometry import box as shapely_box
 from shapely.geometry.base import BaseGeometry
 
-from viztools._messages import ok as _ok, warn as _warn
+from viztools._messages import named_errors as _named_errors, ok as _ok, warn as _warn
+from viztools._validators import (
+    require_axes as _require_axes,
+    require_geometry as _require_geometry,
+    require_positive as _require_positive,
+    require_real as _require_real,
+    require_str as _require_str,
+)
 from wherewhen.geometry import get_bounds
 
 __all__ = [
@@ -87,6 +94,7 @@ def _linestring_parts(geometry: LineString | MultiLineString) -> list[LineString
     return [part for part in geometry.geoms if not part.is_empty]
 
 
+@_named_errors
 def points_to_linestring(points: Sequence[Point]) -> LineString:
     """
     Connect an ordered sequence of Shapely Points into one LineString.
@@ -102,9 +110,26 @@ def points_to_linestring(points: Sequence[Point]) -> LineString:
 
     Raises
     ------
+    TypeError
+        If *points* is not a sequence of Shapely Points.
     ValueError
         If fewer than two points are supplied.
     """
+    if isinstance(points, (str, bytes)) or not hasattr(points, "__len__"):
+        raise TypeError(
+            _warn(
+                "points_to_linestring",
+                f"points must be a sequence of Shapely Points, got {type(points).__name__}.",
+            )
+        )
+    for p in points:
+        if not isinstance(p, Point):
+            raise TypeError(
+                _warn(
+                    "points_to_linestring",
+                    f"points must contain Shapely Points, got {type(p).__name__}.",
+                )
+            )
     if len(points) < 2:
         raise ValueError(
             _warn(
@@ -118,6 +143,7 @@ TickLocation = Literal["all", "x", "y", "both"]
 SpineMode = Literal["none", "bottom", "left", "all", "minimal"]
 
 
+@_named_errors
 def format_plot(
     ax: maxes.Axes | None = None,
     *,
@@ -162,6 +188,7 @@ def format_plot(
     """
     if ax is None:
         ax = plt.gca()
+    _require_axes(ax, "format_plot")
 
     tick_color = tick_color or color
     label_color = label_color or color
@@ -229,6 +256,7 @@ def format_plot(
     return ax
 
 
+@_named_errors
 def set_ax(
     ax: plt.Axes,
     target_aspect: float,
@@ -257,14 +285,8 @@ def set_ax(
     tuple[float, float, float, float]
         New limits as ``(xmin, ymin, xmax, ymax)``.
     """
-    if not isinstance(ax, plt.Axes):
-        raise TypeError(
-            _warn("set_ax", f"Expected matplotlib.axes.Axes, got {type(ax).__name__}.")
-        )
-    if not isinstance(target_aspect, (int, float)) or target_aspect <= 0:
-        raise ValueError(
-            _warn("set_ax", f"target_aspect must be positive, got {target_aspect!r}.")
-        )
+    _require_axes(ax, "set_ax")
+    _require_positive(target_aspect, "set_ax", "target_aspect")
 
     dl = ax.dataLim
     if not np.isfinite(dl.x0) or not np.isfinite(dl.x1):
@@ -281,6 +303,7 @@ def set_ax(
     return xmin, ymin, xmax, ymax
 
 
+@_named_errors
 def normalize_hex_color(color: str) -> str:
     """
     Convert a CSS3 colour name or hex string to a normalised lowercase hex code.
@@ -297,9 +320,12 @@ def normalize_hex_color(color: str) -> str:
 
     Raises
     ------
+    TypeError
+        If *color* is not a str.
     ValueError
         If *color* is not a recognised name or valid hex code.
     """
+    _require_str(color, "normalize_hex_color", "color")
     try:
         if color.startswith("#"):
             _webcolors.hex_to_rgb(color)
@@ -309,6 +335,7 @@ def normalize_hex_color(color: str) -> str:
         raise ValueError(_warn("normalize_hex_color", f"Invalid color: {color}")) from exc
 
 
+@_named_errors
 def adjust_bbox_for_aspect(
     lon1: float,
     lon2: float,
@@ -321,6 +348,13 @@ def adjust_bbox_for_aspect(
 
     Preserves the centre point and expands the larger dimension as needed.
     """
+    for arg, value in (("lon1", lon1), ("lon2", lon2), ("lat1", lat1), ("lat2", lat2)):
+        _require_real(value, "adjust_bbox_for_aspect", arg)
+    _require_positive(target_aspect, "adjust_bbox_for_aspect", "target_aspect")
+    if lat2 == lat1:
+        raise ValueError(
+            _warn("adjust_bbox_for_aspect", "The bounding box has zero height (lat1 == lat2).")
+        )
     current_lon_span = lon2 - lon1
     current_lat_span = lat2 - lat1
     current_aspect = current_lon_span / current_lat_span
@@ -337,8 +371,10 @@ def adjust_bbox_for_aspect(
     return center_lon - half_lon, center_lon + half_lon, lat1, lat2
 
 
+@_named_errors
 def set_aspect_ratio(ax: plt.Axes, target_aspect: float = 16 / 9) -> None:
     """Adjust *ax* xlim/ylim to *target_aspect* after plotting."""
+    _require_axes(ax, "set_aspect_ratio")
     lon1, lon2 = ax.get_xlim()
     lat1, lat2 = ax.get_ylim()
     lon1, lon2, lat1, lat2 = adjust_bbox_for_aspect(
@@ -348,8 +384,10 @@ def set_aspect_ratio(ax: plt.Axes, target_aspect: float = 16 / 9) -> None:
     ax.set_ylim(lat1, lat2)
 
 
+@_named_errors
 def get_aspect_ratio(geom: BaseGeometry) -> float:
     """Return width/height of *geom*'s bounding box."""
+    _require_geometry(geom, "get_aspect_ratio")
     if geom.is_empty:
         raise ValueError(_warn("get_aspect_ratio", "Cannot compute aspect ratio of empty geometry."))
     minx, miny, maxx, maxy = geom.bounds
@@ -362,12 +400,15 @@ def get_aspect_ratio(geom: BaseGeometry) -> float:
     return width / height
 
 
+@_named_errors
 def resize_to_aspect(
     geom: BaseGeometry,
     target_aspect: float,
     preserve_area: bool = True,
 ) -> Polygon:
     """Return an axis-aligned rectangle centred on *geom* with *target_aspect*."""
+    _require_geometry(geom, "resize_to_aspect")
+    _require_positive(target_aspect, "resize_to_aspect", "target_aspect")
     if geom.is_empty:
         return Polygon()
 
@@ -394,19 +435,24 @@ def resize_to_aspect(
     return shapely_box(cx - half_w, cy - half_h, cx + half_w, cy + half_h)
 
 
+@_named_errors
 def to_box(geom: BaseGeometry) -> Polygon:
     """Return the axis-aligned bounding-box polygon of *geom*."""
+    _require_geometry(geom, "to_box")
     return envelope(geom)
 
 
+@_named_errors
 def remove_axis_ticks(ax: plt.Axes) -> None:
     """Hide all tick marks and labels on *ax*."""
+    _require_axes(ax, "remove_axis_ticks")
     ax.set_xticks([])
     ax.set_xticklabels([])
     ax.set_yticks([])
     ax.set_yticklabels([])
 
 
+@_named_errors
 def plot_linestring(
     ax: plt.Axes,
     linestring: LineString | MultiLineString,
@@ -437,8 +483,11 @@ def plot_linestring(
 
     Raises
     ------
+    TypeError
+        If *ax* is not an Axes, or *linestring* is not a LineString or
+        MultiLineString.
     ValueError
-        If *linestring* is not a non-empty LineString or MultiLineString.
+        If *linestring* has no non-empty parts.
 
     See Also
     --------
@@ -454,11 +503,13 @@ def plot_linestring(
     >>> plot_linestring(ax, LineString([(0, 0), (1, 1)]), color="gray", linestyle="--")
     >>> plt.close()
     """
+    _require_axes(ax, "plot_linestring")
     if not isinstance(linestring, (LineString, MultiLineString)):
-        raise ValueError(
+        raise TypeError(
             _warn(
                 "plot_linestring",
-                "linestring must be a non-empty LineString or MultiLineString.",
+                "linestring must be a LineString or MultiLineString, "
+                f"got {type(linestring).__name__}.",
             )
         )
 

@@ -10,6 +10,32 @@ tabtools.
 ## [Unreleased]
 
 ### Changed
+- **Errors name the function you called** (#2), matching jematools, h3tools and
+  wherewhen. Every public function is wrapped by ``named_errors``, so an error
+  raised in a helper, another viztools function or wherewhen is relabelled
+  ``⚠️ [<function you called>]``. Example: ``get_cmap`` used to report
+  ``[get_palette]``, and ``set_ax`` reported wherewhen's ``[get_bounds]``.
+- **Wrong input types raise a labelled ``TypeError``** instead of a raw
+  ``AttributeError``/``TypeError`` from inside matplotlib or Shapely, e.g.
+  ``format_plot("bad")``, ``get_palette(None)``, ``get_aspect_ratio(None)``.
+  A right type with a bad value raises ``ValueError``.
+- Exception classes that changed on bad input (successful calls are unchanged):
+  - ``plot_linestring`` with a non-line geometry: ``ValueError`` → ``TypeError``
+  - ``get_palette`` / ``get_cmap`` with a non-int ``n``: ``ValueError`` → ``TypeError``
+  - ``set_ax`` with a non-number ``target_aspect``: ``ValueError`` → ``TypeError``
+  - ``normalize_hex_color`` with a non-str: ``ValueError`` → ``TypeError``
+  - ``adjust_bbox_for_aspect`` with zero height or ``target_aspect=0``:
+    ``ZeroDivisionError`` → ``ValueError``; a negative ``target_aspect`` returned
+    an upside-down box and is now a ``ValueError``
+  - ``set_aspect_ratio`` with ``target_aspect=0``: matplotlib's unlabelled
+    ``ValueError`` → labelled ``ValueError``
+  - ``resize_to_aspect`` with a non-positive ``target_aspect``: raw ``TypeError``
+    → ``ValueError``
+  - ``list_palettes`` with ``n < 1``: returned a list, now ``ValueError``
+  - ``points_to_linestring`` with non-Point items: ``AttributeError`` → ``TypeError``
+- ``get_palette`` / ``get_cmap`` accept NumPy integers for ``n`` (they were
+  rejected with ``ValueError``); ``n=True`` is now a ``TypeError`` (it returned
+  one colour before).
 - README — portable ``YOUR_LOCAL_PATH`` install; full ``viz`` helper catalogue;
   added **What this is not**, maturity note, and repo-local
   [COMPATIBILITY.md](COMPATIBILITY.md)
