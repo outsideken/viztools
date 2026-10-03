@@ -9,6 +9,13 @@ tabtools.
 
 ## [Unreleased]
 
+### Changed
+- ``named_errors`` is imported from ``wherewhen._messages``. The copy in
+  ``viztools._messages`` is gone. Requires ``wherewhen>=0.2.10`` (was
+  ``>=0.2.0``; outsideken/wherewhen#10). The shared decorator keeps
+  ``cache_info`` and ``cache_clear`` on an ``lru_cache`` wrapper; the
+  viztools copy did not.
+
 ---
 
 ## [0.1.4] — 2026-10-03
