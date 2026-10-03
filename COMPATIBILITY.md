@@ -17,7 +17,8 @@ Each fact lives in one place:
 1. Bump `viztools/_version.py` and the matching `version` in `pyproject.toml`.
 2. Move the `[Unreleased]` section of `CHANGELOG.md` to the new version, dated.
 3. Sync the README version and test-count badges (until viztools#7 retires them).
-4. Update `VIZTOOLS_CONTRACT.md` if the public contract changes.
+4. Update `VIZTOOLS_CONTRACT.md` if the public contract changes. It states no
+   version numbers, so a release that changes no behaviour leaves it alone.
 5. After the release PR merges: tag `viztools-vX.Y.Z`.
 6. Once the stack is verified, update the toolkit matrix in outsideken/geo-toolkit
    (current-freeze table and a dated row).
