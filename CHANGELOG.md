@@ -38,8 +38,10 @@ tabtools.
     an upside-down box and is now a ``ValueError``
   - ``set_aspect_ratio`` with ``target_aspect=0``: matplotlib's unlabelled
     ``ValueError`` → labelled ``ValueError``
-  - ``resize_to_aspect`` with a non-positive ``target_aspect``: raw ``TypeError``
-    → ``ValueError``
+  - ``resize_to_aspect`` with ``target_aspect=0``: ``ZeroDivisionError`` →
+    ``ValueError``; a negative ``target_aspect``: raw ``TypeError`` (complex
+    square root) → ``ValueError``; a non-number: raw ``TypeError`` → labelled
+    ``TypeError``
   - ``list_palettes`` with ``n < 1``: returned a list, now ``ValueError``
   - ``points_to_linestring`` with non-Point items: ``AttributeError`` → ``TypeError``
 - ``get_palette`` / ``get_cmap`` accept NumPy integers for ``n`` (they were

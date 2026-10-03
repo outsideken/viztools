@@ -1,7 +1,7 @@
 # viztools compatibility
 
 `viztools` versions **independently** of jematools, wherewhen, h3tools, and
-tabtools.  Dependents declare a minimum floor (e.g. `viztools>=0.1.0`).
+tabtools.  Dependents declare a minimum floor (e.g. `viztools>=0.1.3`).
 
 ## This package
 
