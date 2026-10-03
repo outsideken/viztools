@@ -9,6 +9,10 @@ tabtools.
 
 ## [Unreleased]
 
+---
+
+## [0.1.4] — 2026-10-03
+
 ### Fixed
 - ``format_plot(spines=[...])`` crashed with ``unhashable type: 'list'`` (#4).
   A list or tuple of spine names now works as documented; a name the axis

@@ -7,7 +7,7 @@ tabtools.  Dependents declare a minimum floor (e.g. `viztools>=0.1.0`).
 
 | Item | Value |
 |---|---|
-| **Current version** | `0.1.3` |
+| **Current version** | `0.1.4` |
 | **Requires** | `wherewhen>=0.2.0` |
 | **Python** | `>=3.9` |
 
@@ -15,10 +15,10 @@ tabtools.  Dependents declare a minimum floor (e.g. `viztools>=0.1.0`).
 
 | Consumer | Declares |
 |---|---|
-| h3tools **0.8.0b1** | `viztools>=0.1.3` (raised from `>=0.1.0` for linestring helpers) |
+| h3tools **0.9.0b2** | `viztools>=0.1.3` (raised from `>=0.1.0` in 0.8.0b1 for linestring helpers) |
 | tabtools / notebooks | import viztools directly for palettes and `format_plot` |
 
-Current freeze stack: wherewhen **0.2.6** + viztools **0.1.3** + h3tools **0.8.0b1**.
+Current freeze stack: wherewhen **0.2.8** + viztools **0.1.4** + h3tools **0.9.0b2**.
 
 Behaviour expectations for consumers: [VIZTOOLS_CONTRACT.md](VIZTOOLS_CONTRACT.md).
 
