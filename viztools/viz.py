@@ -153,7 +153,7 @@ def format_plot(
     tick_width: float = 1,
     tick_color: str | None = None,
     label_color: str | None = None,
-    spines: SpineMode = "none",
+    spines: SpineMode | Sequence[str] = "none",
     show_ticks: TickLocation = "all",
     show_labels: TickLocation = "all",
     grid: bool | str = False,
@@ -172,8 +172,9 @@ def format_plot(
         Base font size for tick labels.  Default ``10``.
     color : str, optional
         Main colour for ticks, labels, and spines.  Default ``'black'``.
-    spines : {'none', 'bottom', 'left', 'all', 'minimal'}, optional
-        Which spines to keep visible.  Default ``'none'``.
+    spines : {'none', 'bottom', 'left', 'all', 'minimal'} or list of str, optional
+        Which spines to keep visible: a preset, or the spine names themselves
+        (e.g. ``["left", "top"]``).  Default ``'none'``.
     show_ticks, show_labels : {'all', 'x', 'y', 'both'}, optional
         Control tick mark and label visibility independently.
     grid : bool or str, optional
@@ -220,13 +221,25 @@ def format_plot(
             else:
                 ax.set_yticklabels([])
 
-    visible_spines = {
-        "none":     [],
-        "bottom":   ["bottom"],
-        "left":     ["left"],
-        "all":      ["top", "bottom", "left", "right"],
-        "minimal":  ["bottom", "left"],
-    }.get(spines, spines if isinstance(spines, list) else [])
+    if isinstance(spines, (list, tuple)):
+        # Checked before the preset lookup: a list can't be a dict key (#4).
+        unknown = [s for s in spines if s not in ax.spines]
+        if unknown:
+            raise ValueError(
+                _warn(
+                    "format_plot",
+                    f"Unknown spine name(s) {unknown!r}; this axis has {list(ax.spines)!r}.",
+                )
+            )
+        visible_spines = list(spines)
+    else:
+        visible_spines = {
+            "none":     [],
+            "bottom":   ["bottom"],
+            "left":     ["left"],
+            "all":      ["top", "bottom", "left", "right"],
+            "minimal":  ["bottom", "left"],
+        }.get(spines, [])
 
     for name, spine in ax.spines.items():
         spine.set_visible(name in visible_spines)

@@ -47,6 +47,28 @@ class TestFormatPlot:
         assert not ax.spines["right"].get_visible()
         plt.close(fig)
 
+    @pytest.mark.parametrize("names", [["left"], ("top", "right"), []])
+    def test_spines_accepts_a_list_of_names(self, names):
+        # #4: a list used to crash with "unhashable type: 'list'".
+        fig, ax = plt.subplots()
+        format_plot(ax, spines=names)
+        for name, spine in ax.spines.items():
+            assert spine.get_visible() == (name in names), name
+        plt.close(fig)
+
+    def test_spines_list_with_unknown_name_raises(self):
+        fig, ax = plt.subplots()
+        with pytest.raises(ValueError, match=r"\[format_plot\] Unknown spine name\(s\) \['middle'\]"):
+            format_plot(ax, spines=["left", "middle"])
+        plt.close(fig)
+
+    def test_unknown_preset_string_still_hides_all_spines(self):
+        # Unchanged behaviour: an unrecognised preset string hides every spine.
+        fig, ax = plt.subplots()
+        format_plot(ax, spines="bogus")
+        assert all(not spine.get_visible() for spine in ax.spines.values())
+        plt.close(fig)
+
 
 class TestSetAx:
     def test_contain_expands_shorter_dimension(self):

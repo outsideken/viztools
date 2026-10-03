@@ -9,6 +9,11 @@ tabtools.
 
 ## [Unreleased]
 
+### Fixed
+- ``format_plot(spines=[...])`` crashed with ``unhashable type: 'list'`` (#4).
+  A list or tuple of spine names now works as documented; a name the axis
+  doesn't have raises ``ValueError``. Preset strings are unchanged.
+
 ### Changed
 - **Errors name the function you called** (#2), matching jematools, h3tools and
   wherewhen. Every public function is wrapped by ``named_errors``, so an error
