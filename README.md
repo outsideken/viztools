@@ -125,13 +125,11 @@ Bundled JSON sources:
 
 ## Compatibility
 
-| Item | Value |
-|---|---|
-| **Current version** | `0.1.4` |
-| **Requires** | `wherewhen>=0.2.0` |
-| **Typical consumer** | h3tools declares `viztools>=0.1.3` |
-
-See [COMPATIBILITY.md](COMPATIBILITY.md) and [VIZTOOLS_CONTRACT.md](VIZTOOLS_CONTRACT.md).
+The version is `viztools.__version__`; what viztools requires is in
+`pyproject.toml`, and what h3tools requires of it is in h3tools' own
+`pyproject.toml`.  See [COMPATIBILITY.md](COMPATIBILITY.md) for where each
+version fact lives and the release checklist, and
+[VIZTOOLS_CONTRACT.md](VIZTOOLS_CONTRACT.md) for the behaviour consumers rely on.
 
 ---
 
