@@ -14,13 +14,14 @@ Each fact lives in one place:
 
 ## Release checklist
 
-1. Bump `viztools/_version.py` and the matching `version` in `pyproject.toml`.
+1. Bump `viztools/_version.py`, the only place the version is typed
+   (`pyproject.toml` reads it; `tests/test_one_version.py` fails if a copy
+   appears elsewhere).
 2. Move the `[Unreleased]` section of `CHANGELOG.md` to the new version, dated.
-3. Sync the README version and test-count badges (until viztools#7 retires them).
-4. Update `VIZTOOLS_CONTRACT.md` if the public contract changes. It states no
+3. Update `VIZTOOLS_CONTRACT.md` if the public contract changes. It states no
    version numbers, so a release that changes no behaviour leaves it alone.
-5. After the release PR merges: tag `viztools-vX.Y.Z`.
-6. Once the stack is verified, update the toolkit matrix in outsideken/geo-toolkit
+4. After the release PR merges: tag `viztools-vX.Y.Z`.
+5. Once the stack is verified, update the toolkit matrix in outsideken/geo-toolkit
    (current-freeze table and a dated row).
-7. Bump a dependant's floor only when it starts calling new APIs, then re-test
+6. Bump a dependant's floor only when it starts calling new APIs, then re-test
    the stack.

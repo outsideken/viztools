@@ -1,7 +1,8 @@
 """
 viztools._version
 =================
-Single source of truth for the package version.
+Single source of truth for the package version: the only place it is typed.
+``pyproject.toml`` reads it (``dynamic = ["version"]``).
 
 This package versions independently of jematools, wherewhen, h3tools, and
 tabtools.  See ``COMPATIBILITY.md`` in the toolkit workspace for tested

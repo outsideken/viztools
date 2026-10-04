@@ -1,9 +1,8 @@
 # viztools
 
-![Version](https://img.shields.io/badge/version-0.1.5-blue)
 ![Python](https://img.shields.io/badge/python-3.9%2B-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
-![Tests](https://img.shields.io/badge/tests-84%20passing-brightgreen)
+![CI](https://github.com/outsideken/viztools/actions/workflows/ci.yml/badge.svg)
 
 Matplotlib axis styling, map layout helpers, and ColorBrewer palettes for the
 JEMA toolkit.  Versions independently of jematools, wherewhen, h3tools, and
