@@ -4,7 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "viztools"
-version = "0.1.5"
+# The version lives only in viztools/_version.py (read below; #7).
+dynamic = ["version"]
 description = "Matplotlib styling and ColorBrewer palettes for geospatial visualization"
 license = { text = "MIT" }
 authors = [{ name = "OutsideKen" }]
@@ -27,6 +28,9 @@ dependencies = [
     "webcolors",
     "wherewhen>=0.2.10",
 ]
+
+[tool.setuptools.dynamic]
+version = { attr = "viztools._version.__version__" }
 
 [tool.setuptools.packages.find]
 where   = ["."]

@@ -9,7 +9,7 @@ Bottom-layer visualization package for the JEMA toolkit.  Import directly::
     from viztools.palettes import get_palette, get_cmap
 
 Consumed by ``h3tools`` (axis styling in notebooks) and future ``tabtools``
-(anomaly palettes).  Depends on ``wherewhen>=0.2.10`` for bounds helpers and
+(anomaly palettes).  Depends on ``wherewhen`` (minimum version in ``pyproject.toml``) for bounds helpers and
 notification style.
 
 On first import prints ``ℹ️ [viztools] v<version> loaded.``

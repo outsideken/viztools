@@ -9,6 +9,13 @@ tabtools.
 
 ## [Unreleased]
 
+### Changed
+- The version is typed in one place, ``viztools/_version.py`` (#7).
+  ``pyproject.toml`` reads it (``dynamic = ["version"]``); the README's version
+  and test-count badges are replaced by the CI badge; the ``__init__``
+  docstring points to ``pyproject.toml`` for the wherewhen floor.
+  ``tests/test_one_version.py`` fails if a copy comes back.
+
 ---
 
 ## [0.1.5] — 2026-10-04
