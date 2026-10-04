@@ -8,4 +8,4 @@ tabtools.  See ``COMPATIBILITY.md`` in the toolkit workspace for tested
 combinations.
 """
 
-__version__: str = "0.1.4"
+__version__: str = "0.1.5"
