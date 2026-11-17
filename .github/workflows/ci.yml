@@ -9,7 +9,8 @@ on:
 jobs:
   test:
     name: test (Python ${{ matrix.python-version }})
-    runs-on: ubuntu-latest
+    # Pinned: ubuntu-latest (26.04) has no Python 3.9 build.
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
@@ -29,6 +30,65 @@ jobs:
 
       - name: Install viztools
         run: pip install -e . pytest
+
+      - name: Run test suite
+        run: pytest tests/ -q -rs
+
+  test-floors:
+    # The job above installs wherewhen from `main`, so a `wherewhen>=` floor in
+    # pyproject.toml that is too low still passes there. This job installs the
+    # floor's own release tag instead, on 3.9 and 3.12, as h3-tools and
+    # JEMA-Tools do. A floor with no tag fails here: declare only released
+    # versions (#11).
+    name: test (declared wherewhen floor, Python ${{ matrix.python-version }})
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.9", "3.12"]
+    env:
+      MPLBACKEND: Agg  # no display on the runner
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install the floor tag of wherewhen
+        run: |
+          python - <<'PY' > floors.txt
+          import re, subprocess, sys
+          text = open("pyproject.toml", encoding="utf-8").read()
+          floors = dict(re.findall(r'"(wherewhen)>=([^",;\s]+)"', text))
+          if "wherewhen" not in floors:
+              sys.exit("no wherewhen>= floor in pyproject.toml")
+          for pkg, version in sorted(floors.items()):
+              url = "https://github.com/outsideken/" + pkg + ".git"
+              tag = pkg + "-v" + version
+              found = subprocess.run(["git", "ls-remote", "--exit-code", "--tags", url, "refs/tags/" + tag],
+                                     capture_output=True).returncode == 0
+              if not found:
+                  sys.exit("floor " + pkg + ">=" + version + " has no release tag " + tag
+                           + "; raise the floor to a released version")
+              print(pkg + " @ git+" + url + "@" + tag)
+          PY
+          cat floors.txt
+          pip install -r floors.txt
+
+      - name: Install viztools (keeps the floor version)
+        run: pip install -e . pytest
+
+      - name: Confirm the installed wherewhen is the floor
+        run: |
+          python - <<'PY'
+          import re, sys
+          from importlib.metadata import version
+          text = open("pyproject.toml", encoding="utf-8").read()
+          floor = re.search(r'"wherewhen>=([^",;\s]+)"', text).group(1)
+          print("wherewhen", version("wherewhen"), "floor", floor)
+          sys.exit(0 if version("wherewhen") == floor else "installed wherewhen is not the floor")
+          PY
 
       - name: Run test suite
         run: pytest tests/ -q -rs
